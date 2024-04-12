@@ -25,6 +25,7 @@ class Extractor:
         arg_strAwsRegionName (str): Nome da região da AWS (padrão: "us-east-1").
         arg_strAwsServiceName (str): Nome do serviço da AWS (padrão: "textract").
         """
+        #FIXME Colocar atributos da classe no padrao (Variaveis com tipo etc)             
         self.aws_access_key_id = arg_strAwsAccessKeyId
         self.aws_secret_access_key = arg_strAwsSecretAccessKey
         self.aws_region_name = arg_strAwsRegionName
@@ -44,6 +45,7 @@ class Extractor:
         """
         try:
             # Convertendo o arquivo PDF em imagens
+            #FIXME colocar no padrao de variaveis
             var_ImgPdf = convert_from_path(arg_strDocumento, dpi=300)
 
             for img in var_ImgPdf:
@@ -66,6 +68,7 @@ class Extractor:
         str: String base64 da imagem.
         """
         try:
+            #FIXME padrao de variaveis
             with open(arg_strDocumento, 'rb') as file:
                 img = Image.open(file)
                 byte_array = BytesIO()
@@ -87,6 +90,7 @@ class Extractor:
         str: Texto extraído do documento.
         """
         try:
+            #FIXME padrao de variaveis
             client = boto3.client(service_name=self.aws_service_name, region_name=self.aws_region_name, 
                                 aws_access_key_id=self.aws_access_key_id, aws_secret_access_key=self.aws_secret_access_key)
             # Abre o arquivo PDF
@@ -121,24 +125,30 @@ class Extractor:
                     
                     # Exclui o arquivo PDF temporário
                     os.remove(var_strCaminhoTempPDF)
+            #FIXME remover teste
             output_txt = "teste_txt.txt"
             with open(output_txt, "w", encoding="utf-8") as file:
                 file.write(var_strTextoExtraido)
             return var_strTextoExtraido
         except Exception as exception:
+                #FIXME corrigir texto do print
                 print(arg_strMensagemLog="Erro ao extrair texto do documento: " + exception.__str__())
                 raise
 
     def reading_text(self, arg_strPromptChatGPT:str, arg_strTexto_documento:str, arg_intMaxTokens:int=350):
         """
+        #FIXME aqui não é leitura, aqui seria extracao dos dados solicitados
         Realiza a leitura de texto usando o ChatGPT.
 
         Parâmetros:
+        #FIXME melhorar a explicacao do argumento do prompt
         arg_strPromptChatGPT (str): Prompt para o modelo de chat.
         arg_strTexto_documento (str): Texto do documento.
         arg_intMaxTokens (int): Número máximo de tokens a serem gerados (padrão: 350).
 
         Retorna:
+        #FIXME tentar evitar ao maximo a utilização de tupla, tentar utilizar dicionario quando não há adição de multiplas linhas, em caso de multiplas
+        #FIXME linhas, utilizar json
         tuple: Tupla contendo a resposta do modelo de ChatGPT, o número de tokens de prompt e o número de tokens de conclusão.
         """
         try:
@@ -178,6 +188,7 @@ class Extractor:
         arg_strLayout (str): Layout do documento.
         arg_strTokenVerification (str): Token de autenticação da API T2Verification.
         arg_strProject (str): ID do projeto na API T2Verification.
+        #FIXME status nao deve ser uma escolha do desenvolvedor
         arg_strStatus (str): Status do documento (padrão: "unassigned").
         arg_strPriority (str): Prioridade do documento (padrão: "high") - Todas Opções: ('low', 'Baixa'), ('medium', 'Média'), ('high', 'Alta').
 
@@ -194,6 +205,7 @@ class Extractor:
             
             var_jsonRespostaChatGPT = json.loads(arg_strRespostaChatGPT)
 
+            #FIXME nao basta ser só json?
             try: 
                 var_dictRespostaTratada = {key: tuple(value.values())[0] for key, value in var_jsonRespostaChatGPT.items()}
                 var_strResposta = json.dumps(var_dictRespostaTratada, ensure_ascii=False, indent=4)
