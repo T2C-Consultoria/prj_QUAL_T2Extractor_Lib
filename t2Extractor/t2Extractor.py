@@ -91,40 +91,52 @@ class Extractor:
         """
         try:
             #FIXME padrao de variaveis 
-            var_bcClientTextract = boto3.client(service_name=self.var_strAwsServiceName, region_name=self.var_strAwsRegionName, 
-                                aws_access_key_id=self.var_strAwsAccessKeyId, aws_secret_access_key=self.var_strAwsSecretAccessKey)
-            # Abre o arquivo PDF
-            with open(arg_strDocumento, "rb") as file:
-                var_pdfReader = PyPDF2.PdfFileReader(file)
-                var_intTotalPages = var_pdfReader.numPages
-                print(f"Número de páginas PDF: {var_intTotalPages}")
+            var_bcClientTextract = boto3.client(service_name=self.var_strAwsServiceName, region_name=self.var_strAwsRegionName,
+                                            aws_access_key_id=self.var_strAwsAccessKeyId, aws_secret_access_key=self.var_strAwsSecretAccessKey)
+
+            if arg_strDocumento.lower().endswith('.pdf'):
+                # Abre o arquivo PDF
+                with open(arg_strDocumento, "rb") as file:
+                    var_pdfReader = PyPDF2.PdfReader(file)
+                    var_intTotalPages = len(var_pdfReader.pages)
+                    print(f"Número de páginas PDF: {var_intTotalPages}")
+                    var_strTextoExtraido = ""
+                    
+                    # Percorre sobre cada página do PDF
+                    for page_number in range(var_intTotalPages):
+                        print(f"Extraindo texto da página: {page_number+1}")
+                        # Extrai uma página especifica
+                        var_pdfPage = var_pdfReader.pages[page_number]
+                        
+                        # Cria um novo arquivo PDF temporário contendo apenas esta página
+                        var_strCaminhoTempPDF = f"page_{page_number}.pdf"
+                        var_pdfTempPDFWriter = PyPDF2.PdfWriter()
+                        var_pdfTempPDFWriter.add_page(var_pdfPage)
+                        
+                        with open(var_strCaminhoTempPDF, "wb") as temp_pdf_file:
+                            var_pdfTempPDFWriter.write(temp_pdf_file)
+                        
+                        # Extrai texto da página atual usando Textract
+                        var_bytesDocumento = open(var_strCaminhoTempPDF, "rb").read()
+                        var_dictResponse = var_bcClientTextract.detect_document_text(Document={'Bytes': var_bytesDocumento})
+                        
+                        # Concatena o texto extraido da página atual
+                        for block in var_dictResponse['Blocks']:
+                            if block['BlockType'] == 'LINE':
+                                var_strTextoExtraido += block['Text'] + "\n"
+                        # Exclui o arquivo PDF temporário
+                        os.remove(var_strCaminhoTempPDF)
+            elif arg_strDocumento.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp')):
+                var_bytesDocumento = open(arg_strDocumento, "rb").read()
+                var_dictResponse = var_bcClientTextract.detect_document_text(Document={'Bytes': var_bytesDocumento})
                 var_strTextoExtraido = ""
                 
-                # Percorre sobre cada página do PDF
-                for page_number in range(var_intTotalPages):
-                    print(f"Extraindo texto da página: {page_number+1}")
-                    # Extrai uma página especifica
-                    var_pdfPage = var_pdfReader.getPage(page_number)
-                    
-                    # Cria um novo arquivo PDF temporário contendo apenas esta página
-                    var_strCaminhoTempPDF = f"page_{page_number}.pdf"
-                    var_pdfTempPDFWriter = PyPDF2.PdfFileWriter()
-                    var_pdfTempPDFWriter.addPage(var_pdfPage)
-                    
-                    with open(var_strCaminhoTempPDF, "wb") as temp_pdf_file:
-                        var_pdfTempPDFWriter.write(temp_pdf_file)
-                    
-                    # Extrai texto da página atual usando Textract
-                    var_bytesDocumento = open(var_strCaminhoTempPDF, "rb").read()
-                    var_dictResponse = var_bcClientTextract.detect_document_text(Document={'Bytes': var_bytesDocumento})
-                    
-                    # Concatena o texto extraido da página atual
-                    for block in var_dictResponse['Blocks']:
-                        if block['BlockType'] == 'LINE':
-                            var_strTextoExtraido += block['Text'] + "\n"
-                    #FIXME remover teste
-                    # Exclui o arquivo PDF temporário
-                    os.remove(var_strCaminhoTempPDF)
+                # Concatena o texto extraido da página atual
+                for block in var_dictResponse['Blocks']:
+                    if block['BlockType'] == 'LINE':
+                        var_strTextoExtraido += block['Text'] + "\n"
+            else: 
+                print("Formato do documento não suportado")
             return var_strTextoExtraido
         except Exception as exception:
                 #FIXME corrigir texto do print 
@@ -151,7 +163,7 @@ class Extractor:
         - "token_conclusao" (int): Número de tokens na resposta gerada.
         """
         try:
-            print("Realizando leitura do texto do documento")
+            print("Iniciando extração dos dados no texto do documento")
 
             # Dicionário contendo os dados a serem enviados na requisição POST
             var_dictBody = {
@@ -208,12 +220,14 @@ class Extractor:
         Exception: Se houver um erro ao enviar informações para a API.
         """
         try:
-            print("Iniciando Verification..")
+            print("Iniciando Verification")
 
-            if ".PDF" in arg_strDocumento.upper():
+            if arg_strDocumento.lower().endswith('.pdf'):
                 var_strBytesDocumento = self.pdf_para_base64(arg_strDocumento=arg_strDocumento)
-            else:
+            elif arg_strDocumento.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp')):
                 var_strBytesDocumento = self.imagem_para_base64(arg_strDocumento=arg_strDocumento)
+            else: 
+                print("Formato do documento não suportado")
             
             #FIXME nao basta ser só json? 
 
