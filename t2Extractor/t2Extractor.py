@@ -145,10 +145,10 @@ class Extractor:
         Retorna:
         #FIXME tentar evitar ao maximo a utilização de tupla, tentar utilizar dicionario quando não há adição de multiplas linhas, em caso de multiplas
         #FIXME linhas, utilizar json 
-        dict: Um dicionário contendo a resposta do ChatGPT, o número de tokens de prompt e o número de tokens de conclusão.
-        - "resposta_gpt" (str): A resposta gerada pelo ChatGPT.
-        - "token_prompt" (int): O número de tokens no prompt enviado.
-        - "token_conclusao" (int): O número de tokens na resposta gerada.
+        var_dictRespostaChatGPT (dict): Dicionário contendo a resposta do ChatGPT, o número de tokens de prompt e o número de tokens de conclusão.
+        - "resposta_gpt" (str): Resposta gerada pelo ChatGPT.
+        - "token_prompt" (int): Número de tokens no prompt enviado.
+        - "token_conclusao" (int): Número de tokens na resposta gerada.
         """
         try:
             print("Realizando leitura do texto do documento")
@@ -177,6 +177,7 @@ class Extractor:
             print("Token Prompt: ", var_intTokenPrompt)
             print("Token de Conclusão: ", var_intTokenCompletion)
 
+            # Dicionário contendo a resposta do ChatGPT, o número de tokens de prompt e o número de tokens de conclusão.
             var_dictRespostaChatGPT = {
                 "resposta_gpt": var_strRespostaChatGPT,
                 "token_prompt": var_intTokenPrompt,
