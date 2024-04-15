@@ -1,8 +1,8 @@
 Metadata-Version: 2.1
-Name: t2-extractor
-Version: 0.0.3
+Name: t2extractor
+Version: 0.0.1
 Requires-Dist: boto3==1.34.32
-Requires-Dist: openpyxl==1.1.0
+Requires-Dist: openpyxl==3.1.2
 Requires-Dist: pandas==2.0.2
 Requires-Dist: pyodbc==4.0.38
 Requires-Dist: PyPDF2==2.11.1

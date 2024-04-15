@@ -25,13 +25,13 @@ class Extractor:
         arg_strAwsRegionName (str): Nome da região da AWS (padrão: "us-east-1").
         arg_strAwsServiceName (str): Nome do serviço da AWS (padrão: "textract").
         """
-        #FIXME Colocar atributos da classe no padrao (Variaveis com tipo etc)             
-        self.aws_access_key_id = arg_strAwsAccessKeyId
-        self.aws_secret_access_key = arg_strAwsSecretAccessKey
-        self.aws_region_name = arg_strAwsRegionName
-        self.aws_service_name = arg_strAwsServiceName
-        self.gpt_api_key = arg_strGptApiKey
-        self.version_chatgpt = arg_strVersionChatGPT
+        #FIXME Colocar atributos da classe no padrao (Variaveis com tipo etc)              
+        self.var_strAwsAccessKeyId = arg_strAwsAccessKeyId
+        self.var_strAwsSecretAccessKey = arg_strAwsSecretAccessKey
+        self.var_strAwsRegionName = arg_strAwsRegionName
+        self.var_strAwsServiceName = arg_strAwsServiceName
+        self.var_strGptApiKey = arg_strGptApiKey
+        self.var_strVersionChatGpt = arg_strVersionChatGPT
 
     def pdf_para_base64(self, arg_strDocumento:str):
         """
@@ -45,14 +45,14 @@ class Extractor:
         """
         try:
             # Convertendo o arquivo PDF em imagens
-            #FIXME colocar no padrao de variaveis
-            var_ImgPdf = convert_from_path(arg_strDocumento, dpi=300)
+            #FIXME colocar no padrao de variaveis 
+            var_listImage = convert_from_path(arg_strDocumento, dpi=300)
 
-            for img in var_ImgPdf:
-                byte_array = BytesIO()
-                img.save(byte_array, format='PNG')
-                imagem_base64 = base64.b64encode(byte_array.getvalue()).decode('utf-8')
-            return imagem_base64
+            for img in var_listImage:
+                var_bytesArray = BytesIO()
+                img.save(var_bytesArray, format='PNG')
+                var_strImgBase64 = base64.b64encode(var_bytesArray.getvalue()).decode('utf-8')
+            return var_strImgBase64
         except Exception as exception:
             print(f"Erro ao converter o PDF para base64: {exception.__str__()}")
             return None
@@ -68,13 +68,13 @@ class Extractor:
         str: String base64 da imagem.
         """
         try:
-            #FIXME padrao de variaveis
+            #FIXME padrao de variaveis 
             with open(arg_strDocumento, 'rb') as file:
-                img = Image.open(file)
-                byte_array = BytesIO()
-                img.save(byte_array, format='PNG')
-                imagem_base64 = base64.b64encode(byte_array.getvalue()).decode('utf-8')
-            return imagem_base64
+                var_imgDocumento = Image.open(file)
+                var_bytesArray = BytesIO()
+                var_imgDocumento.save(var_bytesArray, format='PNG')
+                var_strImgBase64 = base64.b64encode(var_bytesArray.getvalue()).decode('utf-8')
+            return var_strImgBase64
         except Exception as exception:
             print(f"Erro ao converter a imagem para base64: {exception.__str__()}")
             return None
@@ -90,9 +90,9 @@ class Extractor:
         str: Texto extraído do documento.
         """
         try:
-            #FIXME padrao de variaveis
-            client = boto3.client(service_name=self.aws_service_name, region_name=self.aws_region_name, 
-                                aws_access_key_id=self.aws_access_key_id, aws_secret_access_key=self.aws_secret_access_key)
+            #FIXME padrao de variaveis 
+            var_bcClientTextract = boto3.client(service_name=self.var_strAwsServiceName, region_name=self.var_strAwsRegionName, 
+                                aws_access_key_id=self.var_strAwsAccessKeyId, aws_secret_access_key=self.var_strAwsSecretAccessKey)
             # Abre o arquivo PDF
             with open(arg_strDocumento, "rb") as file:
                 var_pdfReader = PyPDF2.PdfFileReader(file)
@@ -116,53 +116,59 @@ class Extractor:
                     
                     # Extrai texto da página atual usando Textract
                     var_bytesDocumento = open(var_strCaminhoTempPDF, "rb").read()
-                    var_dictResponse = client.detect_document_text(Document={'Bytes': var_bytesDocumento})
+                    var_dictResponse = var_bcClientTextract.detect_document_text(Document={'Bytes': var_bytesDocumento})
                     
                     # Concatena o texto extraido da página atual
                     for block in var_dictResponse['Blocks']:
                         if block['BlockType'] == 'LINE':
                             var_strTextoExtraido += block['Text'] + "\n"
-                    
+                    #FIXME remover teste
                     # Exclui o arquivo PDF temporário
                     os.remove(var_strCaminhoTempPDF)
-            #FIXME remover teste
-            output_txt = "teste_txt.txt"
-            with open(output_txt, "w", encoding="utf-8") as file:
-                file.write(var_strTextoExtraido)
             return var_strTextoExtraido
         except Exception as exception:
-                #FIXME corrigir texto do print
-                print(arg_strMensagemLog="Erro ao extrair texto do documento: " + exception.__str__())
+                #FIXME corrigir texto do print 
+                print("Erro ao extrair texto do documento: " + exception.__str__())
                 raise
 
     def reading_text(self, arg_strPromptChatGPT:str, arg_strTexto_documento:str, arg_intMaxTokens:int=350):
         """
-        #FIXME aqui não é leitura, aqui seria extracao dos dados solicitados
-        Realiza a leitura de texto usando o ChatGPT.
+        #FIXME aqui não é leitura, aqui seria extracao dos dados solicitados 
+        Realiza a extração dos dados solicitados ao ChatGPT.
 
         Parâmetros:
-        #FIXME melhorar a explicacao do argumento do prompt
-        arg_strPromptChatGPT (str): Prompt para o modelo de chat.
+        #FIXME melhorar a explicacao do argumento do prompt 
+        arg_strPromptChatGPT (str): Parâmetro que solicita ao ChatGPT quais dados serão extraídos do documento.
         arg_strTexto_documento (str): Texto do documento.
         arg_intMaxTokens (int): Número máximo de tokens a serem gerados (padrão: 350).
 
         Retorna:
         #FIXME tentar evitar ao maximo a utilização de tupla, tentar utilizar dicionario quando não há adição de multiplas linhas, em caso de multiplas
-        #FIXME linhas, utilizar json
-        tuple: Tupla contendo a resposta do modelo de ChatGPT, o número de tokens de prompt e o número de tokens de conclusão.
+        #FIXME linhas, utilizar json 
+        dict: Um dicionário contendo a resposta do ChatGPT, o número de tokens de prompt e o número de tokens de conclusão.
+        - "resposta_gpt" (str): A resposta gerada pelo ChatGPT.
+        - "token_prompt" (int): O número de tokens no prompt enviado.
+        - "token_conclusao" (int): O número de tokens na resposta gerada.
         """
         try:
             print("Realizando leitura do texto do documento")
+
+            # Dicionário contendo os dados a serem enviados na requisição POST
             var_dictBody = {
-                "model": self.version_chatgpt,
+                "model": self.var_strVersionChatGpt,
                 "messages": [{"role": "user", "content": f"{arg_strPromptChatGPT}: {arg_strTexto_documento}"}],
                 "max_tokens": arg_intMaxTokens,
                 "temperature": 0.8,
             }
-            var_dictHeaders = {"Authorization": f"Bearer {self.gpt_api_key}", "Content-Type": "application/json"}
+
+            # Cabeçalhos da requisição
+            var_dictHeaders = {"Authorization": f"Bearer {self.var_strGptApiKey}", "Content-Type": "application/json"}
+            
+            # Realiza a requisição POST para a API da openAI
             var_response = requests.post("https://api.openai.com/v1/chat/completions", headers=var_dictHeaders, data=json.dumps(var_dictBody))
             var_jsonResponse = var_response.json()
             
+            # Resposta do Chatgpt, Token da solicitação e Token da Resposta
             var_strRespostaChatGPT = var_jsonResponse["choices"][0]["message"]["content"]
             var_intTokenPrompt = var_jsonResponse['usage']['prompt_tokens']
             var_intTokenCompletion = var_jsonResponse['usage']['completion_tokens']
@@ -171,14 +177,20 @@ class Extractor:
             print("Token Prompt: ", var_intTokenPrompt)
             print("Token de Conclusão: ", var_intTokenCompletion)
 
-            return var_strRespostaChatGPT, var_intTokenPrompt, var_intTokenCompletion
+            var_dictRespostaChatGPT = {
+                "resposta_gpt": var_strRespostaChatGPT,
+                "token_prompt": var_intTokenPrompt,
+                "token_conclusao": var_intTokenCompletion
+            }
+
+            return var_dictRespostaChatGPT
         
         except Exception as exception:
             print("Erro ao realizar leitura do texto do documento: " + exception.__str__())
             raise
 
     def verification(self, arg_strDocumento:str, arg_strRespostaChatGPT:str, arg_strLayout:str, arg_strTokenVerification:str, 
-                     arg_strProject:str, arg_strStatus:str="unassigned", arg_strPriority:str="high"):
+                     arg_strProject:str, arg_strPriority:str="high"):
         """
         Realiza a verificação de um documento.
 
@@ -188,8 +200,7 @@ class Extractor:
         arg_strLayout (str): Layout do documento.
         arg_strTokenVerification (str): Token de autenticação da API T2Verification.
         arg_strProject (str): ID do projeto na API T2Verification.
-        #FIXME status nao deve ser uma escolha do desenvolvedor
-        arg_strStatus (str): Status do documento (padrão: "unassigned").
+        #FIXME status nao deve ser uma escolha do desenvolvedor 
         arg_strPriority (str): Prioridade do documento (padrão: "high") - Todas Opções: ('low', 'Baixa'), ('medium', 'Média'), ('high', 'Alta').
 
         Raises:
@@ -203,30 +214,26 @@ class Extractor:
             else:
                 var_strBytesDocumento = self.imagem_para_base64(arg_strDocumento=arg_strDocumento)
             
-            var_jsonRespostaChatGPT = json.loads(arg_strRespostaChatGPT)
+            #FIXME nao basta ser só json? 
 
-            #FIXME nao basta ser só json?
-            try: 
-                var_dictRespostaTratada = {key: tuple(value.values())[0] for key, value in var_jsonRespostaChatGPT.items()}
-                var_strResposta = json.dumps(var_dictRespostaTratada, ensure_ascii=False, indent=4)
-            except: 
-                var_strResposta = json.dumps(var_jsonRespostaChatGPT, ensure_ascii=False, indent=4)
-
+            # Dicionário contendo os dados a serem enviados na requisição POST
             var_strUrl = "https://api.t2verification.com.br/api/tasks/"
             var_dictBody = {
                 "project": arg_strProject, # ID do Projeto no Verification
                 "t2layout": arg_strLayout, # Nome do Layout do Documento no Verification
                 "t2priority": arg_strPriority, # Prioridade do Documento
-                "t2document": f"{var_strBytesDocumento}", # Documento em Bytes que será renderizado no Portal
-                "t2status": arg_strStatus, # Status do Documento
-                "t2verification": f"{var_strResposta}" # Informações do Documento
+                "t2document": var_strBytesDocumento, # Documento em Bytes que será renderizado no Portal
+                "t2status": "unassigned", # Status do Documento
+                "t2verification": arg_strRespostaChatGPT # Informações do Documento
             }
 
+            # Cabeçalhos da requisição
             var_dictHeaders = {
                 "Authorization": f"Bearer {arg_strTokenVerification}",
                 "Content-Type": "application/json"
             }
 
+            # Realiza a requisição POST para o Portal T2 Verification
             var_response = requests.post(var_strUrl, json=var_dictBody, headers=var_dictHeaders)
 
             if var_response.status_code == 200 or var_response.status_code == 201:

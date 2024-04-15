@@ -1,8 +1,0 @@
-setup.py
-t2Extractor/__init__.py
-t2Extractor/t2Extractor.py
-t2_extractor.egg-info/PKG-INFO
-t2_extractor.egg-info/SOURCES.txt
-t2_extractor.egg-info/dependency_links.txt
-t2_extractor.egg-info/requires.txt
-t2_extractor.egg-info/top_level.txt
