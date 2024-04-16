@@ -16,7 +16,6 @@
 
 ## Instalação
 Você pode instalar o T2Extractor:
-- 
 
 ## Dependências
 - boto3
