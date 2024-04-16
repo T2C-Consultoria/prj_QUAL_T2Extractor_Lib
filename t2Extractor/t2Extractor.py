@@ -24,8 +24,7 @@ class Extractor:
         arg_strAwsSecretAccessKey (str): Chave de acesso secreta da AWS.
         arg_strAwsRegionName (str): Nome da região da AWS (padrão: "us-east-1").
         arg_strAwsServiceName (str): Nome do serviço da AWS (padrão: "textract").
-        """
-        #FIXME Colocar atributos da classe no padrao (Variaveis com tipo etc)              
+        """          
         self.var_strAwsAccessKeyId = arg_strAwsAccessKeyId
         self.var_strAwsSecretAccessKey = arg_strAwsSecretAccessKey
         self.var_strAwsRegionName = arg_strAwsRegionName
@@ -33,6 +32,8 @@ class Extractor:
         self.var_strGptApiKey = arg_strGptApiKey
         self.var_strVersionChatGpt = arg_strVersionChatGPT
 
+    #FIXME Tipo de saída da função nao está sendo especificado , exemplo: ...) -> str:
+    #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
     def pdf_para_base64(self, arg_strDocumento:str):
         """
         Converte um arquivo PDF em uma string base64.
@@ -45,7 +46,6 @@ class Extractor:
         """
         try:
             # Convertendo o arquivo PDF em imagens
-            #FIXME colocar no padrao de variaveis 
             var_listImage = convert_from_path(arg_strDocumento, dpi=300)
 
             for img in var_listImage:
@@ -57,6 +57,8 @@ class Extractor:
             print(f"Erro ao converter o PDF para base64: {exception.__str__()}")
             return None
 
+    #FIXME Tipo de saída da função nao está sendo especificado , exemplo: ...) -> str:
+    #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
     def imagem_para_base64(self, arg_strDocumento:str):
         """
         Converte uma imagem em uma string base64.
@@ -68,7 +70,6 @@ class Extractor:
         str: String base64 da imagem.
         """
         try:
-            #FIXME padrao de variaveis 
             with open(arg_strDocumento, 'rb') as file:
                 var_imgDocumento = Image.open(file)
                 var_bytesArray = BytesIO()
@@ -79,6 +80,8 @@ class Extractor:
             print(f"Erro ao converter a imagem para base64: {exception.__str__()}")
             return None
 
+    #FIXME Tipo de saída da função nao está sendo especificado , exemplo: ...) -> str:
+    #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
     def extract_text_document(self, arg_strDocumento:str):
         """
         Extrai texto de um documento usando AWS Textract.
@@ -90,9 +93,10 @@ class Extractor:
         str: Texto extraído do documento.
         """
         try:
-            #FIXME padrao de variaveis 
-            var_bcClientTextract = boto3.client(service_name=self.var_strAwsServiceName, region_name=self.var_strAwsRegionName,
-                                            aws_access_key_id=self.var_strAwsAccessKeyId, aws_secret_access_key=self.var_strAwsSecretAccessKey)
+            var_bcClientTextract = boto3.client(service_name=self.var_strAwsServiceName, 
+                                                region_name=self.var_strAwsRegionName,
+                                                aws_access_key_id=self.var_strAwsAccessKeyId, 
+                                                aws_secret_access_key=self.var_strAwsSecretAccessKey)
 
             if arg_strDocumento.lower().endswith('.pdf'):
                 # Abre o arquivo PDF
@@ -124,6 +128,7 @@ class Extractor:
                         for block in var_dictResponse['Blocks']:
                             if block['BlockType'] == 'LINE':
                                 var_strTextoExtraido += block['Text'] + "\n"
+
                         # Exclui o arquivo PDF temporário
                         os.remove(var_strCaminhoTempPDF)
             elif arg_strDocumento.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp')):
@@ -139,24 +144,23 @@ class Extractor:
                 print("Formato do documento não suportado")
             return var_strTextoExtraido
         except Exception as exception:
-                #FIXME corrigir texto do print 
                 print("Erro ao extrair texto do documento: " + exception.__str__())
                 raise
-
+    
+    #FIXME Tipo de saída da função nao está sendo especificado , exemplo: ...) -> str:
+    #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
+    #FIXME aqui não é leitura, aqui seria extracao dos dados solicitados ou captura dos campos, extracao dos campos, algo assim
     def reading_text(self, arg_strPromptChatGPT:str, arg_strTexto_documento:str, arg_intMaxTokens:int=350):
         """
-        #FIXME aqui não é leitura, aqui seria extracao dos dados solicitados 
         Realiza a extração dos dados solicitados ao ChatGPT.
 
         Parâmetros:
-        #FIXME melhorar a explicacao do argumento do prompt 
         arg_strPromptChatGPT (str): Parâmetro que solicita ao ChatGPT quais dados serão extraídos do documento.
         arg_strTexto_documento (str): Texto do documento.
         arg_intMaxTokens (int): Número máximo de tokens a serem gerados (padrão: 350).
 
         Retorna:
-        #FIXME tentar evitar ao maximo a utilização de tupla, tentar utilizar dicionario quando não há adição de multiplas linhas, em caso de multiplas
-        #FIXME linhas, utilizar json 
+
         var_dictRespostaChatGPT (dict): Dicionário contendo a resposta do ChatGPT, o número de tokens de prompt e o número de tokens de conclusão.
         - "resposta_gpt" (str): Resposta gerada pelo ChatGPT.
         - "token_prompt" (int): Número de tokens no prompt enviado.
@@ -199,12 +203,16 @@ class Extractor:
             return var_dictRespostaChatGPT
         
         except Exception as exception:
+            #FIXME aqui não é leitura, aqui seria extracao dos dados solicitados ou captura dos campos, extracao dos campos, algo assim
             print("Erro ao realizar leitura do texto do documento: " + exception.__str__())
             raise
 
+
+    #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
     def verification(self, arg_strDocumento:str, arg_strRespostaChatGPT:str, arg_strLayout:str, arg_strTokenVerification:str, 
                      arg_strProject:str, arg_strPriority:str="high"):
         """
+        #FIXME melhorar a explicacao
         Realiza a verificação de um documento.
 
         Parâmetros:
@@ -213,7 +221,6 @@ class Extractor:
         arg_strLayout (str): Layout do documento.
         arg_strTokenVerification (str): Token de autenticação da API T2Verification.
         arg_strProject (str): ID do projeto na API T2Verification.
-        #FIXME status nao deve ser uma escolha do desenvolvedor 
         arg_strPriority (str): Prioridade do documento (padrão: "high") - Todas Opções: ('low', 'Baixa'), ('medium', 'Média'), ('high', 'Alta').
 
         Raises:
@@ -229,7 +236,6 @@ class Extractor:
             else: 
                 print("Formato do documento não suportado")
             
-            #FIXME nao basta ser só json? 
 
             # Dicionário contendo os dados a serem enviados na requisição POST
             var_strUrl = "https://api.t2verification.com.br/api/tasks/"
@@ -248,6 +254,7 @@ class Extractor:
                 "Content-Type": "application/json"
             }
 
+            #FIXME variavel fora do padrao
             # Realiza a requisição POST para o Portal T2 Verification
             var_response = requests.post(var_strUrl, json=var_dictBody, headers=var_dictHeaders)
 
@@ -255,7 +262,9 @@ class Extractor:
                 print(var_response.text)
             else:
                 print(var_response.text)
+                #FIXME raise sem tipo do erro e sem texto do erro ? 
                 raise
         except Exception as exception:
             print("Erro ao subir informações para a API: " + exception.__str__())
+            #FIXME raise sem tipo do erro e sem texto do erro ? 
             raise
