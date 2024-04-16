@@ -13,7 +13,7 @@ class Extractor:
     Classe para extrair texto de documentos usando AWS Textract e interagir com o OpenAI GPT para processamento.
     """
     def __init__(self, arg_strGptApiKey:str, arg_strVersionChatGPT:str, arg_strAwsAccessKeyId:str, 
-                 arg_strAwsSecretAccessKey:str, arg_strAwsRegionName:str="us-east-1", arg_strAwsServiceName:str="textract"):
+                arg_strAwsSecretAccessKey:str, arg_strAwsRegionName:str="us-east-1", arg_strAwsServiceName:str="textract"):
         """
         Inicializa o T2Extractor com as credenciais da AWS e a chave de API do OpenAI GPT.
 
@@ -34,7 +34,7 @@ class Extractor:
 
     #FIXME Tipo de saída da função nao está sendo especificado , exemplo: ...) -> str:
     #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
-    def pdf_para_base64(self, arg_strCaminhoDocumento:str) -> str:
+    def pdf_to_base64(self, arg_strCaminhoDocumento:str) -> str:
         """
         Converte um arquivo PDF em uma string base64.
 
@@ -59,7 +59,7 @@ class Extractor:
 
     #FIXME Tipo de saída da função nao está sendo especificado , exemplo: ...) -> str:
     #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
-    def imagem_para_base64(self, arg_strCaminhoDocumento:str) -> str:
+    def image_to_base64(self, arg_strCaminhoDocumento:str) -> str:
         """
         Converte uma imagem em uma string base64.
 
@@ -154,7 +154,7 @@ class Extractor:
     #FIXME Tipo de saída da função nao está sendo especificado , exemplo: ...) -> str:
     #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
     #FIXME aqui não é leitura, aqui seria extracao dos dados solicitados ou captura dos campos, extracao dos campos, algo assim
-    def reading_text(self, arg_strPromptChatGPT:str, arg_strTextoDocumento:str, arg_intMaxTokens:int=350) -> dict:
+    def capture_data(self, arg_strPromptChatGPT:str, arg_strTextoDocumento:str, arg_intMaxTokens:int=350) -> dict:
         """
         Captura os dados especificos do texto do documento, seguindo as configurações do prompt. 
         Após receber o texto, efetua a busca e extrai os dados solicitados." 
@@ -244,12 +244,12 @@ class Extractor:
             # Dicionário contendo os dados a serem enviados na requisição POST
             var_strUrl = "https://api.t2verification.com.br/api/tasks/"
             var_dictBody = {
-                "project": arg_strProject, # ID do Projeto no Verification
-                "t2layout": arg_strLayout, # Nome do Layout do Documento no Verification
-                "t2priority": arg_strPriority, # Prioridade do Documento
-                "t2document": var_strBytesDocumento, # Documento em Bytes que será renderizado no Portal
-                "t2status": "unassigned", # Status do Documento
-                "t2verification": arg_strRespostaChatGPT # Informações do Documento
+                "project": arg_strProject,                  # ID do Projeto no Verification
+                "t2layout": arg_strLayout,                  # Nome do Layout do Documento no Verification
+                "t2priority": arg_strPriority,              # Prioridade do Documento
+                "t2document": var_strBytesDocumento,        # Documento em Bytes que será renderizado no Portal
+                "t2status": "unassigned",                   # Status do Documento
+                "t2verification": arg_strRespostaChatGPT    # Informações do Documento
             }
 
             # Cabeçalhos da requisição
