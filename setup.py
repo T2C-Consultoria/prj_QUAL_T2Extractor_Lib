@@ -7,7 +7,6 @@ setup(
     install_requires=[
         "boto3>=1.34.84",
         "openpyxl>=3.1.2",
-        "pandas>=2.2.2",
         "pdf2image>=1.17.0",
         "pyodbc>=5.1.0",
         "PyPDF2>=3.0.1",
