@@ -24,8 +24,7 @@ class Extractor:
         arg_strAwsSecretAccessKey (str): Chave de acesso secreta da AWS.
         arg_strAwsRegionName (str): Nome da região da AWS (padrão: "us-east-1").
         arg_strAwsServiceName (str): Nome do serviço da AWS (padrão: "textract").
-        """
-        #FIXME Colocar atributos da classe no padrao (Variaveis com tipo etc)              
+        """          
         self.var_strAwsAccessKeyId = arg_strAwsAccessKeyId
         self.var_strAwsSecretAccessKey = arg_strAwsSecretAccessKey
         self.var_strAwsRegionName = arg_strAwsRegionName
@@ -33,20 +32,21 @@ class Extractor:
         self.var_strGptApiKey = arg_strGptApiKey
         self.var_strVersionChatGpt = arg_strVersionChatGPT
 
-    def pdf_para_base64(self, arg_strDocumento:str):
+    #FIXME Tipo de saída da função nao está sendo especificado , exemplo: ...) -> str:
+    #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
+    def pdf_para_base64(self, arg_strCaminhoDocumento:str) -> str:
         """
         Converte um arquivo PDF em uma string base64.
 
         Parâmetros:
-        arg_strDocumento (str): Caminho para o arquivo PDF.
+        arg_strCaminhoDocumento (str): Caminho para o arquivo PDF.
 
         Retorna:
-        str: String base64 do arquivo PDF.
+        var_strImgBase64 (str): String base64 do arquivo PDF.
         """
         try:
             # Convertendo o arquivo PDF em imagens
-            #FIXME colocar no padrao de variaveis 
-            var_listImage = convert_from_path(arg_strDocumento, dpi=300)
+            var_listImage = convert_from_path(arg_strCaminhoDocumento, dpi=300)
 
             for img in var_listImage:
                 var_bytesArray = BytesIO()
@@ -54,49 +54,54 @@ class Extractor:
                 var_strImgBase64 = base64.b64encode(var_bytesArray.getvalue()).decode('utf-8')
             return var_strImgBase64
         except Exception as exception:
-            print(f"Erro ao converter o PDF para base64: {exception.__str__()}")
+            print("Erro ao converter o PDF para base64: " + exception.__str__())
             return None
 
-    def imagem_para_base64(self, arg_strDocumento:str):
+    #FIXME Tipo de saída da função nao está sendo especificado , exemplo: ...) -> str:
+    #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
+    def imagem_para_base64(self, arg_strCaminhoDocumento:str) -> str:
         """
         Converte uma imagem em uma string base64.
 
         Parâmetros:
-        arg_strDocumento (str): Caminho para a imagem.
+        arg_strCaminhoDocumento (str): Caminho para o arquivo imagem.
 
         Retorna:
-        str: String base64 da imagem.
+        var_strImgBase64 (str): String base64 da imagem.
         """
         try:
-            #FIXME padrao de variaveis 
-            with open(arg_strDocumento, 'rb') as file:
+            with open(arg_strCaminhoDocumento, 'rb') as file:
                 var_imgDocumento = Image.open(file)
                 var_bytesArray = BytesIO()
                 var_imgDocumento.save(var_bytesArray, format='PNG')
                 var_strImgBase64 = base64.b64encode(var_bytesArray.getvalue()).decode('utf-8')
             return var_strImgBase64
         except Exception as exception:
-            print(f"Erro ao converter a imagem para base64: {exception.__str__()}")
+            print("Erro ao converter a imagem para base64: " + exception.__str__())
             return None
 
-    def extract_text_document(self, arg_strDocumento:str):
+    #FIXME Tipo de saída da função nao está sendo especificado , exemplo: ...) -> str:
+    #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
+    def extract_text_document(self, arg_strCaminhoDocumento:str) -> str:
         """
         Extrai texto de um documento usando AWS Textract.
 
         Parâmetros:
-        arg_strDocumento (str): Caminho para o documento.
+        arg_strCaminhoDocumento (str): Caminho para o documento.
 
         Retorna:
-        str: Texto extraído do documento.
+        var_strTextoExtraido (str): Texto extraído do documento.
         """
         try:
-            #FIXME padrao de variaveis 
-            var_bcClientTextract = boto3.client(service_name=self.var_strAwsServiceName, region_name=self.var_strAwsRegionName,
-                                            aws_access_key_id=self.var_strAwsAccessKeyId, aws_secret_access_key=self.var_strAwsSecretAccessKey)
+            var_bcClientTextract = boto3.client(service_name=self.var_strAwsServiceName, 
+                                                region_name=self.var_strAwsRegionName,
+                                                aws_access_key_id=self.var_strAwsAccessKeyId, 
+                                                aws_secret_access_key=self.var_strAwsSecretAccessKey)
 
-            if arg_strDocumento.lower().endswith('.pdf'):
+            if arg_strCaminhoDocumento.lower().endswith('.pdf'):
                 # Abre o arquivo PDF
-                with open(arg_strDocumento, "rb") as file:
+                print("Extraindo texto do documento, formato: PDF")
+                with open(arg_strCaminhoDocumento, "rb") as file:
                     var_pdfReader = PyPDF2.PdfReader(file)
                     var_intTotalPages = len(var_pdfReader.pages)
                     print(f"Número de páginas PDF: {var_intTotalPages}")
@@ -124,10 +129,13 @@ class Extractor:
                         for block in var_dictResponse['Blocks']:
                             if block['BlockType'] == 'LINE':
                                 var_strTextoExtraido += block['Text'] + "\n"
+
                         # Exclui o arquivo PDF temporário
                         os.remove(var_strCaminhoTempPDF)
-            elif arg_strDocumento.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp')):
-                var_bytesDocumento = open(arg_strDocumento, "rb").read()
+            elif arg_strCaminhoDocumento.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp')):
+                print("Extraindo texto do documento, formato: " + arg_strCaminhoDocumento.lower().split('.')[-1])
+
+                var_bytesDocumento = open(arg_strCaminhoDocumento, "rb").read()
                 var_dictResponse = var_bcClientTextract.detect_document_text(Document={'Bytes': var_bytesDocumento})
                 var_strTextoExtraido = ""
                 
@@ -137,38 +145,38 @@ class Extractor:
                         var_strTextoExtraido += block['Text'] + "\n"
             else: 
                 print("Formato do documento não suportado")
+            
+            print("Texto extraído do documento")
             return var_strTextoExtraido
         except Exception as exception:
-                #FIXME corrigir texto do print 
-                print("Erro ao extrair texto do documento: " + exception.__str__())
-                raise
-
-    def reading_text(self, arg_strPromptChatGPT:str, arg_strTexto_documento:str, arg_intMaxTokens:int=350):
+                raise Exception("Erro ao extrair texto do documento: " + exception.__str__())
+    
+    #FIXME Tipo de saída da função nao está sendo especificado , exemplo: ...) -> str:
+    #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
+    #FIXME aqui não é leitura, aqui seria extracao dos dados solicitados ou captura dos campos, extracao dos campos, algo assim
+    def reading_text(self, arg_strPromptChatGPT:str, arg_strTextoDocumento:str, arg_intMaxTokens:int=350) -> dict:
         """
-        #FIXME aqui não é leitura, aqui seria extracao dos dados solicitados 
-        Realiza a extração dos dados solicitados ao ChatGPT.
-
+        Captura os dados especificos do texto do documento, seguindo as configurações do prompt. 
+        Após receber o texto, efetua a busca e extrai os dados solicitados." 
+        
         Parâmetros:
-        #FIXME melhorar a explicacao do argumento do prompt 
         arg_strPromptChatGPT (str): Parâmetro que solicita ao ChatGPT quais dados serão extraídos do documento.
-        arg_strTexto_documento (str): Texto do documento.
+        arg_strTextoDocumento (str): Texto do documento.
         arg_intMaxTokens (int): Número máximo de tokens a serem gerados (padrão: 350).
 
         Retorna:
-        #FIXME tentar evitar ao maximo a utilização de tupla, tentar utilizar dicionario quando não há adição de multiplas linhas, em caso de multiplas
-        #FIXME linhas, utilizar json 
         var_dictRespostaChatGPT (dict): Dicionário contendo a resposta do ChatGPT, o número de tokens de prompt e o número de tokens de conclusão.
         - "resposta_gpt" (str): Resposta gerada pelo ChatGPT.
         - "token_prompt" (int): Número de tokens no prompt enviado.
         - "token_conclusao" (int): Número de tokens na resposta gerada.
         """
         try:
-            print("Iniciando extração dos dados no texto do documento")
+            print("Iniciando captura dos dados no texto do documento")
 
             # Dicionário contendo os dados a serem enviados na requisição POST
             var_dictBody = {
                 "model": self.var_strVersionChatGpt,
-                "messages": [{"role": "user", "content": f"{arg_strPromptChatGPT}: {arg_strTexto_documento}"}],
+                "messages": [{"role": "user", "content": f"{arg_strPromptChatGPT}: {arg_strTextoDocumento}"}],
                 "max_tokens": arg_intMaxTokens,
                 "temperature": 0.8,
             }
@@ -177,8 +185,8 @@ class Extractor:
             var_dictHeaders = {"Authorization": f"Bearer {self.var_strGptApiKey}", "Content-Type": "application/json"}
             
             # Realiza a requisição POST para a API da openAI
-            var_response = requests.post("https://api.openai.com/v1/chat/completions", headers=var_dictHeaders, data=json.dumps(var_dictBody))
-            var_jsonResponse = var_response.json()
+            var_reqResponse = requests.post("https://api.openai.com/v1/chat/completions", headers=var_dictHeaders, data=json.dumps(var_dictBody))
+            var_jsonResponse = var_reqResponse.json()
             
             # Resposta do Chatgpt, Token da solicitação e Token da Resposta
             var_strRespostaChatGPT = var_jsonResponse["choices"][0]["message"]["content"]
@@ -199,21 +207,24 @@ class Extractor:
             return var_dictRespostaChatGPT
         
         except Exception as exception:
-            print("Erro ao realizar leitura do texto do documento: " + exception.__str__())
-            raise
+            #FIXME aqui não é leitura, aqui seria extracao dos dados solicitados ou captura dos campos, extracao dos campos, algo assim
+            raise Exception("Erro ao realizar captura dos dados solicitados: " + exception.__str__())
 
-    def verification(self, arg_strDocumento:str, arg_strRespostaChatGPT:str, arg_strLayout:str, arg_strTokenVerification:str, 
+
+    #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
+    def verification(self, arg_strCaminhoDocumento:str, arg_strRespostaChatGPT:str, arg_strLayout:str, arg_strTokenVerification:str, 
                      arg_strProject:str, arg_strPriority:str="high"):
         """
-        Realiza a verificação de um documento.
-
+        #FIXME melhorar a explicacao
+        Os dados que foram capturados do documento são enviados para o portal do T2 Verification, onde os usuários podem revisar. 
+        Caso identifiquem alguma informação incorreta, eles tem a opção de fazer as correções necessárias.
+        
         Parâmetros:
-        arg_strDocumento (str): Caminho para o documento.
+        arg_strCaminhoDocumento (str): Caminho para o documento.
         arg_strRespostaChatGPT (str): Resposta do ChatGPT.
         arg_strLayout (str): Layout do documento.
         arg_strTokenVerification (str): Token de autenticação da API T2Verification.
         arg_strProject (str): ID do projeto na API T2Verification.
-        #FIXME status nao deve ser uma escolha do desenvolvedor 
         arg_strPriority (str): Prioridade do documento (padrão: "high") - Todas Opções: ('low', 'Baixa'), ('medium', 'Média'), ('high', 'Alta').
 
         Raises:
@@ -222,14 +233,13 @@ class Extractor:
         try:
             print("Iniciando Verification")
 
-            if arg_strDocumento.lower().endswith('.pdf'):
-                var_strBytesDocumento = self.pdf_para_base64(arg_strDocumento=arg_strDocumento)
-            elif arg_strDocumento.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp')):
-                var_strBytesDocumento = self.imagem_para_base64(arg_strDocumento=arg_strDocumento)
+            if arg_strCaminhoDocumento.lower().endswith('.pdf'):
+                var_strBytesDocumento = self.pdf_para_base64(arg_strCaminhoDocumento=arg_strCaminhoDocumento)
+            elif arg_strCaminhoDocumento.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp')):
+                var_strBytesDocumento = self.imagem_para_base64(arg_strCaminhoDocumento=arg_strCaminhoDocumento)
             else: 
                 print("Formato do documento não suportado")
             
-            #FIXME nao basta ser só json? 
 
             # Dicionário contendo os dados a serem enviados na requisição POST
             var_strUrl = "https://api.t2verification.com.br/api/tasks/"
@@ -248,14 +258,15 @@ class Extractor:
                 "Content-Type": "application/json"
             }
 
+            #FIXME variavel fora do padrao
             # Realiza a requisição POST para o Portal T2 Verification
-            var_response = requests.post(var_strUrl, json=var_dictBody, headers=var_dictHeaders)
+            var_reqResponse = requests.post(var_strUrl, json=var_dictBody, headers=var_dictHeaders)
 
-            if var_response.status_code == 200 or var_response.status_code == 201:
-                print(var_response.text)
+            if var_reqResponse.status_code == 200 or var_reqResponse.status_code == 201:
+                print(var_reqResponse.text)
             else:
-                print(var_response.text)
-                raise
+                #FIXME raise sem tipo do erro e sem texto do erro ? 
+                raise Exception("Erro na resposta da API: Status Code " + var_reqResponse.status_code.__str__() + ", Mensagem: " + var_reqResponse.text)
         except Exception as exception:
-            print("Erro ao subir informações para a API: " + exception.__str__())
-            raise
+            #FIXME raise sem tipo do erro e sem texto do erro ? 
+            raise Exception("Erro ao subir informações para o T2 Verification: " + exception.__str__())
