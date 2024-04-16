@@ -14,7 +14,7 @@
 
 **Captura de Dados Específicos:** Captura dados específicos do texto do documento conforme configurações do prompt do OpenAI GPT.
 
-**Envio de Dados para T2 Verification:** Envia os dados extraídos para o portal T2 Verification para verificação humana.
+**Envio de Dados para T2 Verification:** Envia os dados extraídos para o portal T2 Verification para verificação do usuário.
 
 ## Instalação
 Você pode instalar o T2Extractor:
