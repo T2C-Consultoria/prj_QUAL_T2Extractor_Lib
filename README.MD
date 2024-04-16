@@ -8,7 +8,7 @@
 
 **Integração com AWS Textract:** Utiliza o serviço AWS Textract para extração de texto de documentos.
 
-**Interação com OpenAI GPT:** Interage com o OpenAI GPT para captura dados específicos do texto do documento conforme configurações do prompt do OpenAI GPT
+**Interação com OpenAI GPT:** Interage com o OpenAI GPT para capturar dados específicos do texto do documento conforme configurações do prompt do OpenAI GPT
 
 **Conversão de Documentos em Base64:** Converte documentos em formato PDF e imagens em strings base64.
 
