@@ -3,6 +3,12 @@
 ## O que é?
 **T2Extractor** é uma biblioteca Python que oferece funcionalidades para extração de texto de documentos usando AWS Textract e interação com o OpenAI GPT.
 
+<div>
+  <a href="https://www.python.org/" target="_blank"><img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" target="_blank"></a>
+  <a href ="https://aws.amazon.com/pt/textract/" target="_blank"><img src="https://img.shields.io/badge/Amazon_AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white" target="_blank"></a>
+  <a href="https://chat.openai.com/" target="_blank"><img src="https://img.shields.io/badge/chatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white" target="_blank"></a>  
+</div>
+
 ## Principais recursos
 **Extração de Texto de Documentos:** Extrai texto de documentos em formatos PDF e imagens.
 
@@ -19,7 +25,7 @@
 ## Instalação
 - `pip install "git+https://github.com/T2C-Consultoria/prj_QUAL_T2Extractor_Lib"`
 
-## Dependências
+## Tecnologias Utilizadas
 - boto3
 - openpyxl
 - pdf2image
