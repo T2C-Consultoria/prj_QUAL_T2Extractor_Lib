@@ -15,7 +15,7 @@
 **Envio de Dados para T2 Verification:** Envia os dados extraídos para o portal T2 Verification para verificação do usuário.
 
 ## Instalação
-Você pode instalar o T2Extractor:
+- `pip install "git+https://github.com/T2C-Consultoria/prj_QUAL_T2Extractor_Lib"`
 
 ## Dependências
 - boto3
