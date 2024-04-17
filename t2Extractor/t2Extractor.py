@@ -32,8 +32,6 @@ class Extractor:
         self.var_strGptApiKey = arg_strGptApiKey
         self.var_strVersionChatGpt = arg_strVersionChatGPT
 
-    #FIXME Tipo de saída da função nao está sendo especificado , exemplo: ...) -> str:
-    #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
     def pdf_to_base64(self, arg_strCaminhoDocumento:str) -> str:
         """
         Converte um arquivo PDF em uma string base64.
@@ -57,8 +55,6 @@ class Extractor:
             print("Erro ao converter o PDF para base64: " + exception.__str__())
             return None
 
-    #FIXME Tipo de saída da função nao está sendo especificado , exemplo: ...) -> str:
-    #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
     def image_to_base64(self, arg_strCaminhoDocumento:str) -> str:
         """
         Converte uma imagem em uma string base64.
@@ -80,8 +76,6 @@ class Extractor:
             print("Erro ao converter a imagem para base64: " + exception.__str__())
             return None
 
-    #FIXME Tipo de saída da função nao está sendo especificado , exemplo: ...) -> str:
-    #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
     def extract_text_document(self, arg_strCaminhoDocumento:str) -> str:
         """
         Extrai texto de um documento usando AWS Textract.
@@ -151,9 +145,6 @@ class Extractor:
         except Exception as exception:
                 raise Exception("Erro ao extrair texto do documento: " + exception.__str__())
     
-    #FIXME Tipo de saída da função nao está sendo especificado , exemplo: ...) -> str:
-    #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
-    #FIXME aqui não é leitura, aqui seria extracao dos dados solicitados ou captura dos campos, extracao dos campos, algo assim
     def capture_data(self, arg_strPromptChatGPT:str, arg_strTextoDocumento:str, arg_intMaxTokens:int=350) -> dict:
         """
         Captura os dados especificos do texto do documento, seguindo as configurações do prompt. 
@@ -207,15 +198,11 @@ class Extractor:
             return var_dictRespostaChatGPT
         
         except Exception as exception:
-            #FIXME aqui não é leitura, aqui seria extracao dos dados solicitados ou captura dos campos, extracao dos campos, algo assim
             raise Exception("Erro ao realizar captura dos dados solicitados: " + exception.__str__())
 
-
-    #FIXME Talvez para o argumento do caminho do documento não seria melhor arg_strCaminhoDocumento ? 
     def verification(self, arg_strCaminhoDocumento:str, arg_strRespostaChatGPT:str, arg_strLayout:str, arg_strTokenVerification:str, 
                      arg_strProject:str, arg_strPriority:str="high"):
         """
-        #FIXME melhorar a explicacao
         Os dados que foram capturados do documento são enviados para o portal do T2 Verification, onde os usuários podem revisar. 
         Caso identifiquem alguma informação incorreta, eles tem a opção de fazer as correções necessárias.
         
@@ -258,15 +245,12 @@ class Extractor:
                 "Content-Type": "application/json"
             }
 
-            #FIXME variavel fora do padrao
             # Realiza a requisição POST para o Portal T2 Verification
             var_reqResponse = requests.post(var_strUrl, json=var_dictBody, headers=var_dictHeaders)
 
             if var_reqResponse.status_code == 200 or var_reqResponse.status_code == 201:
                 print(var_reqResponse.text)
             else:
-                #FIXME raise sem tipo do erro e sem texto do erro ? 
                 raise Exception("Erro na resposta da API: Status Code " + var_reqResponse.status_code.__str__() + ", Mensagem: " + var_reqResponse.text)
         except Exception as exception:
-            #FIXME raise sem tipo do erro e sem texto do erro ? 
             raise Exception("Erro ao subir informações para o T2 Verification: " + exception.__str__())
