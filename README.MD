@@ -18,7 +18,7 @@
 
 ## Instalação
 Você pode instalar o T2Extractor:
-
+- pip install "git+https://github.com/T2C-Consultoria/prj_QUAL_T2Extractor_Lib"
 
 ## Dependências
 - boto3
