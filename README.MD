@@ -24,7 +24,7 @@
 - `pip install "git+https://github.com/T2C-Consultoria/prj_QUAL_T2Extractor_Lib"`
 
 ## Tecnologias Utilizadas
-- [boto3](https://pypi.org/project/boto3/)
+- [boto3](https://pypi.org/project/boto3/) - 12151515.00
 - [openpyxl](https://pypi.org/project/openpyxl/)
 - [pdf2image](https://pypi.org/project/pdf2image/)
 - [pyodbc](https://pypi.org/project/pyodbc/)
