@@ -24,9 +24,9 @@
 - `pip install "git+https://github.com/T2C-Consultoria/prj_QUAL_T2Extractor_Lib"`
 
 ## Tecnologias Utilizadas
-- [boto3](https://pypi.org/project/boto3/) - 12151515.00
-- [openpyxl](https://pypi.org/project/openpyxl/)
-- [pdf2image](https://pypi.org/project/pdf2image/)
-- [pyodbc](https://pypi.org/project/pyodbc/)
-- [PyPDF2](https://pypi.org/project/PyPDF2/)
-- [requests](https://pypi.org/project/requests/)
+- [boto3](https://pypi.org/project/boto3/) - 1.34.84
+- [openpyxl](https://pypi.org/project/openpyxl/) - 3.1.2
+- [pdf2image](https://pypi.org/project/pdf2image/) - 1.17.0
+- [pyodbc](https://pypi.org/project/pyodbc/) - 5.1.0
+- [PyPDF2](https://pypi.org/project/PyPDF2/) - 3.0.1
+- [requests](https://pypi.org/project/requests/) - 2.31.0
