@@ -157,9 +157,9 @@ class Extractor:
 
         Retorna:
         var_dictRespostaChatGPT (dict): Dicionário contendo a resposta do ChatGPT, o número de tokens de prompt e o número de tokens de conclusão.
-        - "resposta_gpt" (str): Resposta gerada pelo ChatGPT.
-        - "token_prompt" (int): Número de tokens no prompt enviado.
-        - "token_conclusao" (int): Número de tokens na resposta gerada.
+        - resposta_gpt (str): Resposta gerada pelo ChatGPT.
+        - token_prompt (int): Número de tokens no prompt enviado.
+        - token_conclusao (int): Número de tokens na resposta gerada.
         """
         try:
             print("Iniciando captura dos dados no texto do documento")
@@ -254,3 +254,61 @@ class Extractor:
                 raise Exception("Erro na resposta da API: Status Code " + var_reqResponse.status_code.__str__() + ", Mensagem: " + var_reqResponse.text)
         except Exception as exception:
             raise Exception("Erro ao subir informações para o T2 Verification: " + exception.__str__())
+        
+    def get_data_verification(arg_strProjectId:str, arg_strTokenVerification: str) -> dict:
+        """
+        Obtém os dados verificados do portal T2 Verification.
+
+        Parâmetros:
+        arg_strProjectId (str): ID do projeto na API T2Verification.
+
+        Retorna:
+        var_dictDadosVerificados (dict): Dicionário contendo as informações dos dados extraídos do Verification.
+        - id: Identificação do Documento.
+        - project: Nome do Projeto.
+        - t2layout: Nome do Layout do Documento.
+        - t2priority: Prioridade do Documento.
+        - t2document: Documento em Bytes que será renderizado no Portal.
+        - t2status: Status do Documento.
+        - t2verification: Informações do Documento.
+        - t2modified: Data/Hora da modificação dos Dados.
+        - t2observation: Observação dos dados extraídos.
+        - tasks_without_user: Tarefas não atribuídas à algum Usuário.
+        - tasks_assigned_to_user: Tarefas atribuídas ao Usuário.
+        - t2date: Data/Hora da requisição dos Dados.
+        - t2user: ID do usuário no portal do Verification.
+
+        Raises:
+        Exception: Se houver um erro ao receber as informações da API.
+        """
+        print("Recebendo dados verificados do T2Verification")
+        var_strUrlPortal = f"https://api.t2verification.com.br/api/tasks/download/{arg_strProjectId}/"
+
+        var_dictHeaders = {
+            "Authorization": f"Bearer {arg_strTokenVerification}"
+        }
+
+        var_reqResponse = requests.get(var_strUrlPortal, headers=var_dictHeaders)
+
+        if var_reqResponse.status_code == 200:
+            var_listInfos = var_reqResponse.json()
+            var_dictDadosVerificados = {
+                "id": var_listInfos[0]['id'],
+                "project": var_listInfos[0]['project'],
+                "t2layout": var_listInfos[0]['t2layout'],
+                "t2priority": var_listInfos[0]['t2priority'],
+                "t2document": var_listInfos[0]['t2document'],
+                "t2status": var_listInfos[0]['t2status'],
+                "t2verification": var_listInfos[0]['t2verification'],
+                "t2modified": var_listInfos[0]['t2modified'],
+                "t2observation": var_listInfos[0]['t2observation'],
+                "tasks_without_user": var_listInfos[0]['tasks_without_user'],
+                "tasks_assigned_to_user": var_listInfos[0]['tasks_assigned_to_user'],
+                "t2date": var_listInfos[0]['t2date'],
+                "t2user": var_listInfos[0]['t2user'],
+            }
+            print(f"Dados recebidos do T2Verification: {var_dictDadosVerificados}")
+        else:
+            raise Exception("Falha ao obter os dados:", var_reqResponse.status_code)
+        
+        return var_dictDadosVerificados
