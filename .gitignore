@@ -1,5 +1,6 @@
 # Arquivos de compilação
-#/build/***
+/build/***
 
 # Byte-compiled / interpretado Python
-#__pycache__/***
+__pycache__/***
+/t2extractor.egg-info/***
