@@ -221,9 +221,9 @@ class Extractor:
             print("Iniciando Verification")
 
             if arg_strCaminhoDocumento.lower().endswith('.pdf'):
-                var_strBytesDocumento = self.pdf_para_base64(arg_strCaminhoDocumento=arg_strCaminhoDocumento)
+                var_strBytesDocumento = self.pdf_to_base64(arg_strCaminhoDocumento=arg_strCaminhoDocumento)
             elif arg_strCaminhoDocumento.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp')):
-                var_strBytesDocumento = self.imagem_para_base64(arg_strCaminhoDocumento=arg_strCaminhoDocumento)
+                var_strBytesDocumento = self.image_to_base64(arg_strCaminhoDocumento=arg_strCaminhoDocumento)
             else: 
                 print("Formato do documento não suportado")
             
@@ -255,7 +255,7 @@ class Extractor:
         except Exception as exception:
             raise Exception("Erro ao subir informações para o T2 Verification: " + exception.__str__())
         
-    def get_data_verification(arg_strProjectId:str, arg_strTokenVerification: str) -> dict:
+    def get_data_verification(self, arg_strProjectId:str, arg_strTokenVerification: str) -> dict:
         """
         Obtém os dados verificados do portal T2 Verification.
 
