@@ -24,7 +24,7 @@
 - `pip install "git+https://github.com/T2C-Consultoria/prj_QUAL_T2Extractor_Lib"`
 
 ## Documentação
-A documentação oficial do T2Extractor está hospedada em [link](https://t2cqualidade-docs.notion.site/T2Extractor-7ec006d32bf6406d8ed3fb9c8324608b).
+A documentação oficial do T2Extractor está hospedada no Notion da Equipe da Qualidade da T2C Group.
 
 
 ## Tecnologias Utilizadas
