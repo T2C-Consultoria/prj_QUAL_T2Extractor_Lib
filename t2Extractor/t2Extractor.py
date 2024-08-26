@@ -229,7 +229,7 @@ class Extractor:
             
 
             # Dicionário contendo os dados a serem enviados na requisição POST
-            var_strUrl = "<URL DE TASKS OLHAR DOCUMENTACAO>"
+            var_strUrl = "https://api.t2verification.com.br/api/tasks/"
             var_dictBody = {
                 "project": arg_strProject,                  # ID do Projeto no Verification
                 "t2layout": arg_strLayout,                  # Nome do Layout do Documento no Verification
@@ -282,7 +282,7 @@ class Extractor:
         Exception: Se houver um erro ao receber as informações da API.
         """
         print("Recebendo dados verificados do T2Verification")
-        var_strUrlPortal = f"<URL DE DOWNLOAD OLHAR DOCUMENTACAO>{arg_strProjectId}/"
+        var_strUrlPortal = f"https://api.t2verification.com.br/api/tasks/download/{arg_strProjectId}/"
 
         var_dictHeaders = {
             "Authorization": f"Bearer {arg_strTokenVerification}"
