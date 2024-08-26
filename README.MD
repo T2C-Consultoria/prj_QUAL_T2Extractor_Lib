@@ -24,7 +24,7 @@
 - `pip install "git+https://github.com/T2C-Consultoria/prj_QUAL_T2Extractor_Lib"`
 
 ## Requirements 
-No arquivo requirements.txt, você pode inserir a dependência da seguinte maneira:
+No arquivo **requirements.txt**, devemos inserir a dependência da seguinte maneira:
 - `t2extractor @ git+https://github.com/T2C-Consultoria/prj_QUAL_T2Extractor_Lib.git@main`
 
 ## Documentação
