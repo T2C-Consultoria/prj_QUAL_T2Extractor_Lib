@@ -25,7 +25,7 @@
 
 ## Requirements 
 No arquivo requirements.txt, você pode inserir a dependência da seguinte maneira:
-- t2extractor @ git+https://github.com/T2C-Consultoria/prj_QUAL_T2Extractor_Lib.git@main
+- `t2extractor @ git+https://github.com/T2C-Consultoria/prj_QUAL_T2Extractor_Lib.git@main`
 
 ## Documentação
 A documentação oficial do T2Extractor está hospedada no Notion da Equipe da Qualidade da T2C Group.
