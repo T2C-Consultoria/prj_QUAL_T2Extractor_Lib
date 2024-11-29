@@ -148,7 +148,7 @@ class Extractor:
     def capture_data(self, arg_strPromptChatGPT:str, arg_strTextoDocumento:str, arg_intMaxTokens:int=350) -> dict:
         """
         Captura os dados especificos do texto do documento, seguindo as configurações do prompt. 
-        Após receber o texto, efetua a busca e extrai os dados solicitados." 
+        Após receber o texto, efetua a busca e extrai os dados solicitados" 
         
         Parâmetros:
         arg_strPromptChatGPT (str): Parâmetro que solicita ao ChatGPT quais dados serão extraídos do documento.
